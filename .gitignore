@@ -1,0 +1,4 @@
+# Custom environment variables
+.env
+.venv/
+__pycache__/
