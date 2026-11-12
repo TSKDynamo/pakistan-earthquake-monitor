@@ -1,7 +1,6 @@
 """
 Pakistan Earthquake Monitor
-Fetches, processes, and displays seismic activity near Pakistan using the USGS API.
-
+Fetches, processes, and displays all seismic activity near Pakistan using the USGS API.
 """
 
 __author__ = "Agha Muhammad Roshaan Khan"
@@ -21,16 +20,16 @@ PAKISTAN_BOUNDS = {
 }
 
 
-def fetch_earthquakes(days=30, min_magnitude=3.0):
+def fetch_earthquakes(days=30):
     """
-    Fetch earthquake records from the USGS API within Pakistan's bounding box.
+    Fetch all earthquake records from the USGS API within Pakistan's bounding box
+    for the specified number of past days (no magnitude restriction).
     """
     start_date = datetime.now(timezone.utc) - timedelta(days=days)
 
     params = {
         "format": "geojson",
         "starttime": start_date.strftime("%Y-%m-%d"),
-        "minmagnitude": min_magnitude,
         "minlatitude": PAKISTAN_BOUNDS["minlatitude"],
         "maxlatitude": PAKISTAN_BOUNDS["maxlatitude"],
         "minlongitude": PAKISTAN_BOUNDS["minlongitude"],
@@ -63,7 +62,7 @@ def display_earthquakes(data):
     total = len(features)
 
     if total == 0:
-        print("No earthquakes matched your search criteria.")
+        print("No earthquakes recorded in this time period.")
         return
 
     print("=" * 80)
@@ -99,8 +98,12 @@ def display_earthquakes(data):
     print("-" * 80)
     if magnitudes:
         strongest = max(magnitudes)
+        weakest = min(magnitudes)
         average = sum(magnitudes) / len(magnitudes)
-        print(f"Summary: Strongest: M {strongest:.1f} | Average Magnitude: M {average:.1f}")
+        print(
+            f"Summary: Strongest: M {strongest:.1f} | "
+            f"Weakest: M {weakest:.1f} | Average: M {average:.1f}"
+        )
     print("=" * 80)
 
 
@@ -109,16 +112,12 @@ def main():
     try:
         days_input = input("Enter number of past days to monitor (default 30): ").strip()
         days = int(days_input) if days_input else 30
-
-        mag_input = input("Enter minimum magnitude to filter (default 3.5): ").strip()
-        min_mag = float(mag_input) if mag_input else 3.5
     except ValueError:
-        print("Invalid input. Using default values: 30 days, magnitude 3.5.")
+        print("Invalid input. Using default value: 30 days.")
         days = 30
-        min_mag = 3.5
 
-    print(f"\nFetching earthquakes (Past {days} days, Min Magnitude: {min_mag})...\n")
-    data = fetch_earthquakes(days=days, min_magnitude=min_mag)
+    print(f"\nFetching all earthquakes for the past {days} days...\n")
+    data = fetch_earthquakes(days=days)
     display_earthquakes(data)
 
 
