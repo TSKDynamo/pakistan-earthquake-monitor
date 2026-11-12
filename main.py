@@ -1,7 +1,10 @@
 """
 Pakistan Earthquake Monitor
 Fetches, processes, and displays seismic activity near Pakistan using the USGS API.
+
 """
+
+__author__ = "Agha Muhammad Roshaan Khan"
 
 from datetime import datetime, timedelta, timezone
 import requests
